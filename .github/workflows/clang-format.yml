@@ -32,7 +32,7 @@ jobs:
             do
               formatted_file=$(mktemp)
               clang-format "$file" --style=Google > "$formatted_file"
-              if cmp --silent -- $file" "$formatted_file"; then
+              if cmp --silent -- "$file" "$formatted_file"; then
                 formatting_needed=true
               fi
               rm "$formatted_file"
