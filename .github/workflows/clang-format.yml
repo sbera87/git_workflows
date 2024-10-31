@@ -17,30 +17,26 @@ jobs:
 
       - name: Install clang-format
         run: sudo apt-get install -y clang-format
-      
-      # first do a git diff, filter by file extensions, delimit filenames by spaces
-      - name: Run git diff
-        id: diffstep
-        run: |
-            echo "files=git diff -U0 --no-color HEAD | grep -E '\.cpp$|\.hpp$|\.cc$|\.h$' | tr '\n' ' '" >> $GITHUB_OUTPUT
 
-      # loop over diff files, check if expected formatting needed
-      - name: Run clang-format check
+      - name: Download clang-format-diff.py
+        run: |
+          wget https://raw.githubusercontent.com/llvm/llvm-project/main/clang/tools/clang-format/clang-format-diff.py
+          chmod +x clang-format-diff.py
+      #run formatter inline
+      - name: Format changed lines
         id: formatstep
         run: |
-            formatting_needed=false
-            for file in ${{ steps.changed-files.outputs.files }}; 
-            do
-              formatted_file=$(mktemp)
-              clang-format "$file" --style=Google > "$formatted_file"
-              if cmp --silent -- "$file" "$formatted_file"; then
-                formatting_needed=true
-              fi
-              rm "$formatted_file"
-            done
+          # Format only the changed lines using clang-format-diff.py
+          git diff HEAD | python3 clang-format-diff.py -p1 -i
 
-            if [ "$formatting_needed" = true ]; then
-              echo -e "Formatting violations found:\n"
-              exit 1
-            fi
+      
+      # if differences found
+      - name: Check formatting needed
+        id: diffstep
+        run: |
+          if ! git diff --exit-code; then
+            echo "Formatting issues found!"
+            git diff
+            exit 1
+          fi
 
