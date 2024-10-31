@@ -28,14 +28,14 @@ jobs:
         id: formatstep
         run: |
           # Format only the changed lines using clang-format-diff.py
-          git diff -U0 --no-color HEAD | python3 clang-format-diff.py -p1 -i
+          git diff -U0 --no-color HEAD | python3 clang-format-diff.py -p1 > formatted_differences.patch
 
       # check if differences found after formatting
       - name: Check formatting needed
         id: diffstep
         run: |
-          if git diff --exit-code; then
+          if [ -s formatted_differences.patch ]; then
             echo "Formatting issues found!. Formatted changes:"
-            git diff
+            cat formatted_differences.patch
             exit 1
           fi
