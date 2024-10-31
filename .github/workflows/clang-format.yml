@@ -28,8 +28,6 @@ jobs:
         run: |
           # Format only the changed lines using clang-format-diff.py
           git diff HEAD | python3 clang-format-diff.py -p1 -i
-
-      
       # if differences found
       - name: Check formatting needed
         id: diffstep
