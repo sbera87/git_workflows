@@ -36,5 +36,5 @@ jobs:
         run: |
           if git diff --exit-code; then
             echo "Formatting issues found!. Formatted changes:"
-            exit 1
+            git diff
           fi
