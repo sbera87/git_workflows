@@ -1,7 +1,8 @@
 name: clang-format-check
 
 on:
-  push:
+  pull_request:
+    types: [opened, synchronize]
     branches:
       - main
   workflow_dispatch:
