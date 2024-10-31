@@ -41,5 +41,5 @@ jobs:
             if [ "$formatting_needed" = true ]; then
               echo -e "Formatting violations found:\n"
               exit 1
-            else
+            fi
 
