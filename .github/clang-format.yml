@@ -1,0 +1,46 @@
+name: clang-format-check
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  format-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install clang-format
+        run: sudo apt-get install -y clang-format
+      
+      # first do a git diff, filter by file extensions, delimit filenames by spaces
+      - name: Run git diff
+        id: diffstep
+        run: |
+            echo "files=git diff -U0 --no-color HEAD | grep -E '\.cpp$|\.hpp$|\.cc$|\.h$' | tr '\n' ' '" >> $GITHUB_OUTPUT
+      - name: Run clang-format
+
+      # loop over diff files, check if expected formatting needed
+      - name: Run clang-format check
+        id: formatstep
+        run: |
+            formatting_needed=false
+            for file in ${{ steps.changed-files.outputs.files }}; 
+            do
+              formatted_file=$(mktemp)
+              clang-format "$file" --style=Google > "$formatted_file"
+              if cmp --silent -- $file" "$formatted_file"; then
+                formatting_needed=true
+              fi
+              rm "$formatted_file"
+            done
+
+            if [ "$formatting_needed" = true ]; then
+              echo -e "Formatting violations found:\n"
+              exit 1
+            else
+
