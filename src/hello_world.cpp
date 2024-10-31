@@ -16,3 +16,5 @@ int main() {
   std::cout << "Factorial of " << number << " is " << factorial(number) << "\n";
   return 0;
 }
+
+//dummy
