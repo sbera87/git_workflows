@@ -34,4 +34,7 @@ jobs:
       - name: Check formatting needed
         id: diffstep
         run: |
-          exit 1
+          if git diff --exit-code; then
+            echo "Formatting issues found!. Formatted changes:"
+            exit 1
+          fi
