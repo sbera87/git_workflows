@@ -22,7 +22,6 @@ jobs:
         id: diffstep
         run: |
             echo "files=git diff -U0 --no-color HEAD | grep -E '\.cpp$|\.hpp$|\.cc$|\.h$' | tr '\n' ' '" >> $GITHUB_OUTPUT
-      - name: Run clang-format
 
       # loop over diff files, check if expected formatting needed
       - name: Run clang-format check
