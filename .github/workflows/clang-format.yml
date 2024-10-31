@@ -28,7 +28,7 @@ jobs:
         id: formatstep
         run: |
           # Format only the changed lines using clang-format-diff.py
-          git diff -U0 --no-color HEAD | python3 clang-format-diff.py -p1 > formatted_differences.patch
+          git diff -U0 --no-color main HEAD | python3 clang-format-diff.py -p1 > formatted_differences.patch
 
       # check if differences found after formatting
       - name: Check formatting needed
