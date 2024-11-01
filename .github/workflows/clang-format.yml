@@ -27,6 +27,7 @@ jobs:
           chmod +x clang-format-diff.py
 
       - name: Get the base and head branches
+        id: fetchstep
         run: |
           echo "BASE_BRANCH=${{ github.event.pull_request.base.ref }}" >> $GITHUB_ENV
           echo "HEAD_BRANCH=${{ github.event.pull_request.head.ref }}" >> $GITHUB_ENV
@@ -36,25 +37,32 @@ jobs:
           git fetch origin ${{ env.HEAD_BRANCH }}
 
       #run formatter inline
-      - name: Format changed lines
-        id: formatstep
+      - name: git diff
+        id: diffstep
         env:
           ACTIONS_RUNNER_DEBUG: true
         run: |
           # Format only the changed lines using clang-format-diff.py
           set -e
-          git diff -U0 --no-color origin/${{ env.BASE_BRANCH }}...origin/${{ env.HEAD_BRANCH }} 2> error.log || true
-          if [ -s error.log ]; then
-            echo "Errors encountered:"
-            cat error.log
+          git diff -U0 --no-color origin/${{ env.BASE_BRANCH }}...origin/${{ env.HEAD_BRANCH }} > diff_output.patch
+
+      - name: format diff
+        id: formatstep
+        env:
+          ACTIONS_RUNNER_DEBUG: true
+        run: |
+          if [ -s diff_output.patch ]; then
+            python3 clang-format-diff.py -p1 < diff_output.patch > formatted_differences.patch
+            rm diff_output.patch
           else
-            echo "No errors."
+            exit 1
           fi
-    #| python3 clang-format-diff.py -p1 > formatted_differences.patch
 
       # check if differences found after formatting
       - name: Check formatting needed
-        id: diffstep
+        id: validatestep
+        env:
+          ACTIONS_RUNNER_DEBUG: true
         run: |
           if [ -s formatted_differences.patch ]; then
             echo "Formatting issues found!. Formatted changes:"
