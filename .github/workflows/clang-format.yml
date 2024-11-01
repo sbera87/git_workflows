@@ -45,7 +45,8 @@ jobs:
           # Format only the changed lines using clang-format-diff.py
           set -e
           git diff -U0 --no-color origin/${{ env.BASE_BRANCH }}...origin/${{ env.HEAD_BRANCH }} > diff_output.patch
-
+          cat diff_output.patch
+          
       # run formatter on the differences if any
       - name: format diff
         id: formatstep
@@ -58,7 +59,7 @@ jobs:
               echo "Errors from clang-format-diff.py:"
               cat error.log
             else
-              echo "No errors from clang-format-diff.py "
+              echo "No Errors from clang-format-diff.py"
             fi
             rm diff_output.patch
           fi
