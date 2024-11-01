@@ -26,6 +26,7 @@ jobs:
           wget https://raw.githubusercontent.com/llvm/llvm-project/main/clang/tools/clang-format/clang-format-diff.py
           chmod +x clang-format-diff.py
 
+      # get names of the base and pr branches
       - name: Get the base and head branches
         id: fetchstep
         run: |
@@ -64,7 +65,7 @@ jobs:
             rm diff_output.patch
           fi
 
-      # check if differences found after formatting
+      # check if differences found after formatting, then exit 
       - name: Check formatting needed
         id: validatestep
         env:
