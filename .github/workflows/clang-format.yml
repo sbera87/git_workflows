@@ -14,6 +14,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+          with:
+          fetch-depth: 0  # Fetch all commits of the pull request branch
+
 
       - name: Install clang-format
         run: sudo apt-get install -y clang-format
@@ -23,12 +26,14 @@ jobs:
           wget https://raw.githubusercontent.com/llvm/llvm-project/main/clang/tools/clang-format/clang-format-diff.py
           chmod +x clang-format-diff.py
 
-      - name: Get Default Branch Name
-        id: get-default-branch
+      - name: Get the base and head branches
         run: |
-          DEFAULT_BRANCH=$(git remote show origin | grep 'HEAD branch' | awk '{print $3}')
-          echo "Default branch is: $DEFAULT_BRANCH"
-          echo "default_branch=$DEFAULT_BRANCH" >> $GITHUB_ENV
+          BASE_BRANCH=$(echo ${{ github.event.pull_request.base.ref }})
+          HEAD_BRANCH=$(echo ${{ github.event.pull_request.head.ref }})
+          echo "Base branch: $BASE_BRANCH"
+          echo "Head branch: $HEAD_BRANCH"
+          git fetch origin $BASE_BRANCH
+          git fetch origin $HEAD_BRANCH
 
       #run formatter inline
       - name: Format changed lines
@@ -39,7 +44,7 @@ jobs:
           # Format only the changed lines using clang-format-diff.py
           set -e
           git branch
-          git diff -U0 --no-color ${{ env.default_branch }} HEAD | python3 clang-format-diff.py -p1 > formatted_differences.patch
+          git diff -U0 --no-color origin/$BASE_BRANCH...origin/$HEAD_BRANCH | python3 clang-format-diff.py -p1 > formatted_differences.patch
 
       # check if differences found after formatting
       - name: Check formatting needed
