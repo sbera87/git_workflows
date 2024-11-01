@@ -45,6 +45,7 @@ jobs:
           # Format only the changed lines using clang-format-diff.py
           set -e
           git diff -U0 --no-color origin/${{ env.BASE_BRANCH }}...origin/${{ env.HEAD_BRANCH }} > diff_output.patch
+          cat diff_output.patch
 
       - name: format diff
         id: formatstep
@@ -52,6 +53,7 @@ jobs:
           ACTIONS_RUNNER_DEBUG: true
         run: |
           if [ -s diff_output.patch ]; then
+            echo "diff exists"
             python3 clang-format-diff.py -p1 < diff_output.patch > formatted_differences.patch
             rm diff_output.patch
           else
