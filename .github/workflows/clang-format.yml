@@ -26,9 +26,11 @@ jobs:
       #run formatter inline
       - name: Format changed lines
         id: formatstep
+        env:
+          ACTIONS_RUNNER_DEBUG: true
         run: |
           # Format only the changed lines using clang-format-diff.py
-          git diff -U0 --no-color main HEAD | python3 clang-format-diff.py -p1 > formatted_differences.patch
+          git diff -U0 --no-color origin/main HEAD | python3 clang-format-diff.py -p1 > formatted_differences.patch
 
       # check if differences found after formatting
       - name: Check formatting needed
