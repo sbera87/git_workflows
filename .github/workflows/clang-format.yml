@@ -62,7 +62,13 @@ jobs:
               exit 1
             fi
 
-            python3 clang-format-diff.py -p1 < diff_output.patch 
+            python3 clang-format-diff.py -p1 < diff_output.patch > formatted_differences.patch 2> error.log || true
+            if [ -s error.log ]; then
+              echo "Errors from clang-format-diff.py:"
+              cat error.log
+            else
+              echo "No errors."
+            fi
             rm diff_output.patch
           else
             exit 1
