@@ -15,6 +15,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Get Main Branch Name
+        id: main-branch
+        run: |
+          # Get the default branch name from the repository
+          MAIN_BRANCH=$(git remote show origin | grep 'HEAD branch' | awk '{print $3}')
+          echo "Main branch is: $MAIN_BRANCH"
+          echo "main_branch=$MAIN_BRANCH" >> $GITHUB_ENV  # Set it as an environment variable
+
+      - name: Fetch Main Branch
+        run: |
+          git fetch origin ${{ env.main_branch }}  # Fetch the main branch
+
       - name: Install clang-format
         run: sudo apt-get install -y clang-format
 
@@ -31,7 +43,7 @@ jobs:
         run: |
           # Format only the changed lines using clang-format-diff.py
           git branch
-          git diff -U0 --no-color main HEAD | python3 clang-format-diff.py -p1 > formatted_differences.patch
+          git diff -U0 --no-color origin/${{ env.main_branch }} HEAD | python3 clang-format-diff.py -p1 > formatted_differences.patch
 
       # check if differences found after formatting
       - name: Check formatting needed
