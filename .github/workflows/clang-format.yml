@@ -23,6 +23,9 @@ jobs:
           wget https://raw.githubusercontent.com/llvm/llvm-project/main/clang/tools/clang-format/clang-format-diff.py
           chmod +x clang-format-diff.py
 
+      - name: Fetch main branch
+        run: git fetch origin main
+
       #run formatter inline
       - name: Format changed lines
         id: formatstep
@@ -39,5 +42,6 @@ jobs:
           if [ -s formatted_differences.patch ]; then
             echo "Formatting issues found!. Formatted changes:"
             cat formatted_differences.patch
+            rm formatted_differences.patch
             exit 1
           fi
