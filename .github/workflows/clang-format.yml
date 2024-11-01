@@ -37,6 +37,7 @@ jobs:
           ACTIONS_RUNNER_DEBUG: true
         run: |
           # Format only the changed lines using clang-format-diff.py
+          set -e
           git branch
           git diff -U0 --no-color ${{ env.default_branch }} HEAD | python3 clang-format-diff.py -p1 > formatted_differences.patch
 
