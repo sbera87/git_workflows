@@ -36,7 +36,7 @@ jobs:
           git fetch origin ${{ env.BASE_BRANCH }}
           git fetch origin ${{ env.HEAD_BRANCH }}
 
-      #run formatter inline
+      #get differences on the PR branch
       - name: git diff
         id: diffstep
         env:
@@ -45,33 +45,22 @@ jobs:
           # Format only the changed lines using clang-format-diff.py
           set -e
           git diff -U0 --no-color origin/${{ env.BASE_BRANCH }}...origin/${{ env.HEAD_BRANCH }} > diff_output.patch
-          cat diff_output.patch
 
+      # run formatter on the differences if any
       - name: format diff
         id: formatstep
         env:
           ACTIONS_RUNNER_DEBUG: true
         run: |
           if [ -s diff_output.patch ]; then
-            echo "diff exists"
-
-            if [ -f clang-format-diff.py ]; then
-              echo "clang-format-diff.py exists."
-            else
-              echo "Error: clang-format-diff.py not found!" >&2
-              exit 1
-            fi
-
             python3 clang-format-diff.py -p1 < diff_output.patch > formatted_differences.patch 2> error.log || true
             if [ -s error.log ]; then
               echo "Errors from clang-format-diff.py:"
               cat error.log
             else
-              echo "No errors."
+              echo "No errors from clang-format-diff.py "
             fi
             rm diff_output.patch
-          else
-            exit 1
           fi
 
       # check if differences found after formatting
