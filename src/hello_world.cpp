@@ -2,18 +2,16 @@
 
 namespace {
 
-int factorials(int n) 
-{
-  if (n <= 1)
-        return 1;
-    return n *      factorials(n - 1);
-}
-
-int factorials2(int n) 
-{
+int factorials(int n) {
   if (n <= 1)
     return 1;
-  return n *        factorials2(n - 1);
+  return n * factorials(n - 1);
+}
+
+int factorials2(int n) {
+  if (n <= 1)
+    return 1;
+  return n * factorials2(n - 1);
 }
 
 } // namespace
