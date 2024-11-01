@@ -25,12 +25,6 @@ jobs:
         run: |
           wget https://raw.githubusercontent.com/llvm/llvm-project/main/clang/tools/clang-format/clang-format-diff.py
           chmod +x clang-format-diff.py
-          if [ -f clang-format-diff.py ]; then
-            echo "clang-format-diff.py exists."
-          else
-            echo "Error: clang-format-diff.py not found!" >&2
-            exit 1
-          fi
 
       - name: Get the base and head branches
         id: fetchstep
@@ -60,7 +54,15 @@ jobs:
         run: |
           if [ -s diff_output.patch ]; then
             echo "diff exists"
-            python3 clang-format-diff.py -p1 < diff_output.patch > formatted_differences.patch
+
+            if [ -f clang-format-diff.py ]; then
+              echo "clang-format-diff.py exists."
+            else
+              echo "Error: clang-format-diff.py not found!" >&2
+              exit 1
+            fi
+
+            python3 clang-format-diff.py -p1 < diff_output.patch 
             rm diff_output.patch
           else
             exit 1
