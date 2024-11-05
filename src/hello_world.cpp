@@ -16,7 +16,8 @@ int factorials2(int n) {
 
 int main() {
   int number = 5;
-  std::cout << "Factorial of " << number << " is " << factorials(number) << "\n";
+  std::cout << "Factorial of " << number << " is " << factorials(number)
+            << "\n";
   return 0;
 }
 
