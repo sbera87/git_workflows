@@ -20,7 +20,7 @@ jobs:
 
       - name: Install clang-format
         run: |
-           sudo apt-get update
+          sudo apt-get update
           sudo apt-get install -y wget
           
           # Add LLVM APT repository and the key for secure installation
