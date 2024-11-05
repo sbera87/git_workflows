@@ -19,18 +19,7 @@ jobs:
 
 
       - name: Install clang-format
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget
-          
-          # Add LLVM APT repository and the key for secure installation
-          wget -qO - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/llvm.asc
-          sudo apt-get update
-          
-          # Install clang-format (latest version available, e.g., clang-format-16)
-          sudo apt-get install -y clang-format-16  # You can change the version if a newer version is available
-
-
+        run: sudo apt-get install -y clang-format
 
       - name: Download clang-format-diff.py
         run: |
